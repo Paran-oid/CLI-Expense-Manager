@@ -4,7 +4,6 @@
 #define INPUT_SIZE 100
 
 #include <stdint.h>
-#include "user.h"
 
 void exec();
 void display();

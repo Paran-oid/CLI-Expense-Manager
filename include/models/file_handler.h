@@ -1,6 +1,8 @@
-typedef struct FileHandler
+#include <stdio.h>
+
+typedef struct
 {
     const char *path;
-    FILE *fptr;
+    FILE  *fptr;
 
 } FileHandler;

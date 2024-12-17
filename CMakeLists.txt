@@ -4,6 +4,10 @@ project(ExpenseTracker)
 
 set(CMAKE_C_STANDARD 23)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+
 set(SRC main.c
         src/menu.c
         src/file_manager.c

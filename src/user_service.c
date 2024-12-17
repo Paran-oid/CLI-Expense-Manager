@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "file_manager.h"
+
 uint8_t request_auth(User ** user)
 {
     char op;
@@ -74,7 +76,7 @@ void auth_register(User ** user)
             printf("enter your password: \n");
             if(scanf("%s", (*user)->password) == 1)
             {
-                if(size((*user)->name) <= USERNAME_LIMIT && size((*user)->password) <= PASSWORD_LIMIT)
+                if(size_str((*user)->name) <= USERNAME_LIMIT && size_str((*user)->password) <= PASSWORD_LIMIT)
                 {
                     break;
                 }
@@ -87,6 +89,18 @@ void auth_register(User ** user)
 
     system("clear");
     printf("welcome %s\n", (*user)->name);
+
+    FileHandler *f = (FileHandler *) malloc(sizeof(FileHandler));
+    f->path = "../data/users.txt";
+    
+    char * full_data = (char *) malloc(1);
+    full_data[0] = '\0';
+
+    concat_str(&full_data, (*user)->name);
+    concat_str(&full_data,  "_");
+    concat_str(&full_data, (*user)->password);
+
+    write_file(f, full_data, "w");    
     sleep(1);
     system("clear");
 }

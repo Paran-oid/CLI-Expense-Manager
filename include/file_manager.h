@@ -5,6 +5,6 @@
 #include "file_handler.h"
 
 void init_file(FileHandler *file, const char * path);
-void write_file(FileHandler *file, const char * text);
+void write_file(FileHandler *file, const char * text, const char * mode);
 
 #endif

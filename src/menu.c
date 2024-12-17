@@ -3,8 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "user_service.h"
+
 void exec()
 {
+    system("clear");
+
     uint8_t run = 1;
     User *user = NULL;
 
@@ -37,7 +41,7 @@ void input()
     {
         scanf("%s", text);
 
-        if(size(text) < INPUT_SIZE)
+        if(size_str(text) < INPUT_SIZE)
         {
             break;
         }
@@ -78,6 +82,7 @@ uint8_t input_opt()
             delete_expense();
             break;
         case 'q':
+            system("clear");
             return 0;
         default:
             printf("error processing operation \n");
