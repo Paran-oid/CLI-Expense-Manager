@@ -8,9 +8,9 @@
 #define USERNAME_LIMIT 30
 #define PASSWORD_LIMIT 20
 
-uint8_t request_auth(User ** user);
+bool request_auth(User ** user);
 
-void auth_login(User ** user);
+bool auth_login(User ** user);
 void auth_register(User ** user);
 
 #endif

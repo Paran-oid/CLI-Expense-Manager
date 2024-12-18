@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "user_service.h"
 
@@ -9,7 +10,7 @@ void exec()
 {
     system("clear");
 
-    uint8_t run = 1;
+    bool run = 1;
     User *user = NULL;
 
     while(user == NULL && run)

@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 // STRING SECTION
 
-uint32_t size_str(const char * s)
+size_t size_str(const char * s)
 {
     uint32_t res = 0;
     while(s[res] != '\0')
@@ -18,12 +19,12 @@ uint32_t size_str(const char * s)
 
 void copy_str(char **desStr, const char *toCopyFromStr)
 {
-    uint32_t i = 0;
+    size_t len = size_str(toCopyFromStr);
 
-    if(size_str(toCopyFromStr) > size_str(*desStr))
+    if(*desStr == NULL || len > size_str(*desStr))
     {
         free(*desStr);
-        *desStr = (char *) malloc(sizeof(char) * (size_str(*desStr) + 1));
+        *desStr = (char *) malloc((len + 1) * sizeof(char));
         if(*desStr == NULL)
         {
             printf("Memory allocation failed for copying the string\n");
@@ -31,10 +32,13 @@ void copy_str(char **desStr, const char *toCopyFromStr)
         }
     }
 
-    while(toCopyFromStr[i] != '\0')
-    {
-        *desStr[i] = toCopyFromStr[i];
-    } 
+        for(size_t i = 0; i < len; i++)
+        {
+            (*desStr)[i] = toCopyFromStr[i];
+        }
+
+        (*desStr)[len] = '\0';
+
 }
 
 bool comp_str(const char * str1,const char * str2)
@@ -88,10 +92,85 @@ void concat_str(char ** str, const char * addedStr)
     *str = s;
 }
 
+uint32_t indexOf_str(const char *str, const char item)
+{
+    if(str == NULL)
+    {
+        return (uint32_t)-1;
+    }
+
+    for(size_t i = 0; i < size_str(str); i++)
+    {
+        if(str[i] == item)
+        {
+            return i;
+        }
+    }
+
+    return (uint32_t)-1;
+}
+
+char *substr(char *str, size_t start, size_t length)
+{
+    char *res = (char *) malloc(length + 1);
+    if(res == NULL)
+    {
+        printf("memory allocation failed\n");
+        return NULL;
+    }
+
+    for(size_t i = 0; i < length; i++)
+    {
+        res[i] = str[start + i];
+    }
+
+    res[length] = '\0';
+    return res;
+}
+
+// CHAR SECTION
+
+char to_upper(const char c)
+{
+    if(!('a' <= c && c <= 'z'))
+    {
+        return c;
+    }
+
+    return c - 32;
+}
+
+bool is_upper(const char c)
+{
+    if(c >= 'A' && c <= 'Z')
+    {
+        return true;
+    }
+    return false;
+}
+
+char to_lower(const char c)
+{
+    if(!('A' <= c && c <= 'Z'))
+    {
+        return c;
+    }
+
+    return c + 32;
+}
+
+bool is_lower(const char c)
+{
+    if(c >= 'a' && c <= 'z')
+    {
+        return true;
+    }
+    return false;
+}
+
 // ARRAY SECTION
 
-
-uint32_t size_arr(const char ** arr)
+size_t size_arr(const char ** arr)
 {
     uint32_t count = 0;
     while(arr[count] != NULL)
@@ -100,6 +179,7 @@ uint32_t size_arr(const char ** arr)
     }
     return count;
 }
+
 uint32_t indexOf_arr(const char ** arr, const char * item)
 {
     uint32_t index = 0;
