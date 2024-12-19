@@ -14,6 +14,8 @@
     void concat_str(char **str, const char *addedStr);
     uint32_t indexOf_str(const char *str, const char item);
     char *substr(char *str, size_t start, size_t length);
+    void strip_str(char * s);
+    void remove_str(char *s, char item);
 
     // CHAR SECTION
 

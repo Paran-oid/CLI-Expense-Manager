@@ -66,7 +66,7 @@ void concat_str(char ** str, const char * addedStr)
     }
 
     int n = size_str(*str) +  size_str(addedStr);
-    char *s = (char *) malloc(n + 1);
+    char *s = realloc(*str ,n + 1);
 
 
     if(s == NULL)
@@ -126,6 +126,47 @@ char *substr(char *str, size_t start, size_t length)
 
     res[length] = '\0';
     return res;
+}
+
+void strip_str(char * s)
+{
+    uint32_t l = 0, r = size_str(s) - 1;
+    
+    while(s[l] == ' ' && s[l] != '\0')
+    {
+        l++;
+    }
+
+    while(r > l && s[r] == ' ')
+    {
+        r--;
+    }
+
+    uint32_t new_len = r - l + 1;
+    for(size_t i = 0; i < new_len; i++)
+    {
+        s[i] = s[l + i];
+    }
+
+    s[new_len] = '\0';   
+}
+
+void remove_str(char *s, char item)
+{
+    if(s == NULL)
+    {
+        return;
+    }
+
+    char *src = s, *dst = s;
+    while(*src){
+        if(*src != item)
+        {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
 }
 
 // CHAR SECTION
@@ -198,6 +239,7 @@ uint32_t rindexOf_arr(const char ** arr, const char * item)
 {
     uint32_t index = 0;
     uint32_t res = 0;
+    
     while(arr[index] != NULL)
     {
         if(comp_str(arr[index], item) == true)

@@ -13,4 +13,7 @@ bool request_auth(User ** user);
 bool auth_login(User ** user);
 void auth_register(User ** user);
 
+void encrypt(char *pass);
+void decrypt(char *pass);
+
 #endif

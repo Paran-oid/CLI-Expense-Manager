@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "file_manager.h"
 #include "core.h"
@@ -51,16 +52,20 @@ bool auth_login(User ** user)
 {
     bool loggedIn = false;
 
+    // found user in database
     char *found_entity = NULL;
+    // real username
     char *username = NULL;
+    // real password
     char *password = NULL;
 
+    // choice of leaving or staying
     char choice = 'N';
 
     *user =(User *) malloc(sizeof(User));
     if(*user == NULL)
     {
-        printf("there was an error allocationg memory\n");
+        perror("there was an error allocationg memory\n");
         return;
     }
 
@@ -69,7 +74,7 @@ bool auth_login(User ** user)
 
     if((*user)->name == NULL || (*user)->password == NULL)
     {
-        printf("there was an error allocationg memory for using properties\n");
+        perror("there was an error allocationg memory for using properties\n");
         return;
     }
 
@@ -90,11 +95,8 @@ bool auth_login(User ** user)
                 printf("enter your password\n");
                 if(scanf("%49s", (*user)->password) == 1)
                 {
-                    // fix size issue here
-                    password = substr(found_entity, indexOf_str(found_entity, '_') + 1, size_str(found_entity) - 1);
-                    printf("user entered password %s | with size %d \n", (*user)->password, size_str((*user)->password));
-                    printf("user's pass %s | with size %d\n", password, size_str(password));
-                    printf("are the same?\n%d", comp_str((*user)->password, password));
+                    password = substr(found_entity, indexOf_str(found_entity, '_') + 1, size_str(found_entity));
+                    decrypt(password);
                     if(comp_str((*user)->password,password))
                     {
                         loggedIn = true;
@@ -131,7 +133,7 @@ bool auth_login(User ** user)
     system("clear");
     if((*user)->name == NULL)
     {
-        printf("please authenticate in order to continue\n");
+        perror("please authenticate in order to continue\n");
         sleep(2);
         return 0;
     } else {
@@ -146,7 +148,7 @@ void auth_register(User ** user)
     *user = (User *) malloc(sizeof(User));
     if(*user == NULL)
     {
-        printf("error allocationg memory to user\n");
+        perror("error allocationg memory to user\n");
         return;
     }
 
@@ -180,6 +182,8 @@ void auth_register(User ** user)
         printf("invalid input(s)\n");
     }
 
+    encrypt((*user)->password);
+
     system("clear");
     printf("welcome %s\n", (*user)->name);
 
@@ -189,15 +193,81 @@ void auth_register(User ** user)
     char * full_data = (char *) malloc(1);
     full_data[0] = '\0';
 
+
     concat_str(&full_data, (*user)->name);
     concat_str(&full_data,  "_");
     concat_str(&full_data, (*user)->password);
 
-    write_file(f, full_data, "w");    
+    write_file(f, full_data, "a");    
     sleep(1);
     system("clear");
 
     free(full_data);
-    free(f->fptr);
+    f->fptr = NULL;
     free(f);
+}
+
+void encrypt(char *pass)
+{
+    uint8_t min = 65, max = 90, len = 5;
+    char *salt = (char*) malloc(len + 1);
+
+    // seed
+    srand(time(NULL));
+
+    for(size_t i = 0; i < len; i++)
+    {
+        salt[i] = (char)((rand() % (max - min + 1)) + min);
+    }
+
+
+    salt[len] = '\0';
+    printf("Generated salt: %s\n", salt);
+
+    len += size_str(pass);
+
+    for(size_t i = 0; i < len; i++)
+    {
+        pass[i] = pass[i] + 3;
+        if(pass[i] > 'Z' && pass[i] <= 'Z' + 3)
+        {
+            pass[i] = ('A' - 1) + (pass[i] % 'Z');
+        }
+
+        if(pass[i] > 'z')
+        {
+            pass[i] = ('a' - 1) + (pass[i] % 'z');
+        }
+    }
+
+    free(salt);
+
+}
+
+void decrypt(char *pass)
+{
+    size_t n = size_str(pass);
+    for(size_t i = 0; i < n; i++)
+    {
+        char converted = pass[i] - 3;
+        if(converted < 'A' || (converted > 'Z' && converted < 'a'))
+        {
+            converted += 23;
+        }
+
+        pass[i] = converted;
+    }
+
+    n -= 5;
+
+    char *temp = realloc(pass, n + 1);
+
+    temp[n] = '\0';
+
+    if(temp == NULL)
+    {
+        perror("error allocationg memory");
+    } else {
+        pass = temp;
+    }
 }

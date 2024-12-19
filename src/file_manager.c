@@ -98,13 +98,14 @@ char *search_user_file(FileHandler *file, const char *mode, const char * usernam
         username_found = substr(buffer, 0, index_underscore);
         if(comp_str(username_found,username))
         {
-            res = (char *)malloc(size_arr(buffer));
+            res = (char *)malloc(size_str(buffer));
             if(res == NULL)
             {
                 printf("error allocating memory for result\n");
                 return NULL;
             }
             copy_str(&res, buffer);
+            remove_str(res, '\n');
             free(username_found);
             fclose(file->fptr);
             return res;
