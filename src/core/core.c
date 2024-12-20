@@ -7,9 +7,9 @@
 
 // STRING SECTION
 
-size_t size_str(const char * s)
+size_t str_len(const char * s)
 {
-    uint32_t res = 0;
+    size_t res = 0;
     while(s[res] != '\0')
     {
         res++;
@@ -19,9 +19,9 @@ size_t size_str(const char * s)
 
 void copy_str(char **desStr, const char *toCopyFromStr)
 {
-    size_t len = size_str(toCopyFromStr);
+    size_t len = str_len(toCopyFromStr);
 
-    if(*desStr == NULL || len > size_str(*desStr))
+    if(*desStr == NULL || len > str_len(*desStr))
     {
         free(*desStr);
         *desStr = (char *) malloc((len + 1) * sizeof(char));
@@ -43,9 +43,9 @@ void copy_str(char **desStr, const char *toCopyFromStr)
 
 bool comp_str(const char * str1,const char * str2)
 {
-    if(size_str(str1) != size_str(str2)){return false;}
+    if(str_len(str1) != str_len(str2)){return false;}
 
-    unsigned int i = 0;
+    size_t i = 0;
     while(str1[i] != '\0' && str2[i] != '\0')
     {
         if(str1[i] != str2[i])
@@ -65,7 +65,7 @@ void concat_str(char ** str, const char * addedStr)
         return;
     }
 
-    int n = size_str(*str) +  size_str(addedStr);
+    int n = str_len(*str) +  str_len(addedStr);
     char *s = realloc(*str ,n + 1);
 
 
@@ -75,14 +75,14 @@ void concat_str(char ** str, const char * addedStr)
         return;
     }
 
-    for(uint32_t i = 0; i < size_str(*str); i++)
+    for(size_t i = 0; i < str_len(*str); i++)
     {
         s[i] = (*str)[i];
     }
 
-    uint32_t k = 0;
+    size_t k = 0;
 
-    for(uint32_t i = size_str(*str); i < n; i++)
+    for(size_t i = str_len(*str); i < n; i++)
     {
         s[i] = addedStr[k++];
     }
@@ -92,14 +92,14 @@ void concat_str(char ** str, const char * addedStr)
     *str = s;
 }
 
-uint32_t indexOf_str(const char *str, const char item)
+size_t indexOf_str(const char *str, const char item)
 {
     if(str == NULL)
     {
-        return (uint32_t)-1;
+        return SIZE_MAX;
     }
 
-    for(size_t i = 0; i < size_str(str); i++)
+    for(size_t i = 0; i < str_len(str); i++)
     {
         if(str[i] == item)
         {
@@ -107,7 +107,7 @@ uint32_t indexOf_str(const char *str, const char item)
         }
     }
 
-    return (uint32_t)-1;
+    return SIZE_MAX;
 }
 
 char *substr(char *str, size_t start, size_t length)
@@ -130,9 +130,14 @@ char *substr(char *str, size_t start, size_t length)
 
 void strip_str(char * s)
 {
-    uint32_t l = 0, r = size_str(s) - 1;
+    if(s == NULL)
+    {
+        return;
+    }
     
-    while(s[l] == ' ' && s[l] != '\0')
+    size_t l = 0, r = str_len(s) - 1;
+    
+    while(s[l] == ' ')
     {
         l++;
     }
@@ -142,7 +147,7 @@ void strip_str(char * s)
         r--;
     }
 
-    uint32_t new_len = r - l + 1;
+    size_t new_len = r - l + 1;
     for(size_t i = 0; i < new_len; i++)
     {
         s[i] = s[l + i];
@@ -167,6 +172,56 @@ void remove_str(char *s, char item)
         src++;
     }
     *dst = '\0';
+}
+
+char *to_upper_str(char *s)
+{
+    size_t n = str_len(s);
+    char *res = (char *)malloc(sizeof(char) * (n + 1));
+
+
+    if(res == NULL)
+    {
+        perror("there was an error allocating memory \n");
+        return;
+    }
+
+    size_t i = 0;
+    char *ptr = s;
+    while(*ptr != '\0')
+    {
+        res[i] = to_upper(ptr[i]);
+        i++;
+        ptr++;
+    }
+
+    res[i] = '\0';  
+    printf("res is %s \n", res);
+    return res;
+}
+
+char *to_lower_str(char *s)
+{
+    size_t n = str_len(s);
+    char *res = malloc(sizeof(char) * (n + 1));
+
+    if(res == NULL)
+    {
+        perror("there was an error allocating memory \n");
+        return;
+    }
+
+    size_t i = 0;
+    char *ptr = s;
+    while(*ptr != '\0')
+    {
+        res[i] = to_lower(ptr[i]);
+        i++;
+        ptr++;
+    }
+
+    res[i] = '\0';
+    return res; 
 }
 
 // CHAR SECTION
@@ -213,17 +268,17 @@ bool is_lower(const char c)
 
 size_t size_arr(const char ** arr)
 {
-    uint32_t count = 0;
-    while(arr[count] != NULL)
+    size_t res = 0;
+    while(arr[res] != NULL)
     {
-        count++;
+        res++;
     }
-    return count;
+    return res;
 }
 
-uint32_t indexOf_arr(const char ** arr, const char * item)
+size_t indexOf_arr(const char ** arr, const char * item)
 {
-    uint32_t index = 0;
+    size_t index = 0;
     while(arr[index] != NULL)
     {
         if(comp_str(arr[index], item) == true)
@@ -232,13 +287,13 @@ uint32_t indexOf_arr(const char ** arr, const char * item)
         }
         index++;
     }
-    return -1;
+    return SIZE_MAX;
 }
 
-uint32_t rindexOf_arr(const char ** arr, const char * item)
+size_t rindexOf_arr(const char ** arr, const char * item)
 {
-    uint32_t index = 0;
-    uint32_t res = 0;
+    size_t index = 0;
+    size_t res = 0;
     
     while(arr[index] != NULL)
     {
@@ -249,4 +304,19 @@ uint32_t rindexOf_arr(const char ** arr, const char * item)
         index++;
     }
     return res;
+}
+
+void *mem_set(void *ptr, int value, size_t len)
+{
+    unsigned char * p = (unsigned char *)ptr;
+    unsigned char val = (unsigned char) value;
+
+    while(len)
+    {
+        *p = val;
+        p++;
+        len--;
+    }
+
+    return p;
 }

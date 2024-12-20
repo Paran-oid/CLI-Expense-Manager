@@ -5,7 +5,23 @@ typedef enum ExpenseType
 {
     Transport,
     Food,
-    Groceries
+    Groceries,
+    Rent,
+    Utilities,
+    Entertainment,
+    Healthcare,
+    Insurance,
+    Education,
+    Clothing,
+    Savings,
+    Subscriptions,
+    Travel,
+    PersonalCare,
+    Gifts,
+    Taxes,
+    LoanRepayment,
+    Miscellaneous,
+    Other
 } ExpenseType;
 
 typedef struct Expense

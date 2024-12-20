@@ -1,6 +1,7 @@
 #include "file_manager.h"
 
 #include <stdio.h>
+#include <sys/stat.h>
 
 #include "core.h"
 
@@ -98,7 +99,7 @@ char *search_user_file(FileHandler *file, const char *mode, const char * usernam
         username_found = substr(buffer, 0, index_underscore);
         if(comp_str(username_found,username))
         {
-            res = (char *)malloc(size_str(buffer));
+            res = (char *)malloc(str_len(buffer));
             if(res == NULL)
             {
                 printf("error allocating memory for result\n");
@@ -116,4 +117,36 @@ char *search_user_file(FileHandler *file, const char *mode, const char * usernam
     fclose(file->fptr);
     
     return NULL;
+}
+
+bool create_directory(const char *path)
+{
+    if(path == NULL)
+    {
+        perror("empty parameters entered");
+        return 1;
+    }
+
+    struct stat st = {0};
+    if(stat(path, &st) == -1)
+    {
+        if(mkdir(path, 0700) == -1)
+        {
+            perror("there was an error creating your directory");
+            return false;
+        }
+    }
+    return true;
+}
+
+bool expense_to_directory(const char* path, Expense *expense)
+{
+    FileHandler *f;
+    if(f->fptr = fopen(path, "r"))
+    {
+        fclose(f->fptr);
+        return true;
+    }
+
+    return false;
 }

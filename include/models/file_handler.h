@@ -1,3 +1,6 @@
+#ifndef FILE_HANDLER_H
+#define FILE_HANDLER_H
+
 #include <stdio.h>
 
 typedef struct
@@ -6,3 +9,5 @@ typedef struct
     FILE  *fptr;
 
 } FileHandler;
+
+#endif

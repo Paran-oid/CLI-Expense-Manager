@@ -13,5 +13,7 @@ int main(void)
     // once I finished my app convert those txt files to some kind of binary format
     // optimize my code for speed and memory
 
+    // make unit testing
+
     return 0;
 }

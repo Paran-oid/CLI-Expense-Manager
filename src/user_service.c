@@ -95,10 +95,13 @@ bool auth_login(User ** user)
                 printf("enter your password\n");
                 if(scanf("%49s", (*user)->password) == 1)
                 {
-                    password = substr(found_entity, indexOf_str(found_entity, '_') + 1, size_str(found_entity));
+                    password = substr(found_entity, indexOf_str(found_entity, '_') + 1, str_len(found_entity));
                     decrypt(password);
                     if(comp_str((*user)->password,password))
                     {
+                        mem_set(password, 0, str_len(password));
+                        mem_set((*user)->password, 0, str_len((*user)->password));
+                        free(password);
                         loggedIn = true;
                         break;
                     }
@@ -171,7 +174,7 @@ void auth_register(User ** user)
             printf("enter your password: \n");
             if(scanf("%s", (*user)->password) == 1)
             {
-                if(size_str((*user)->name) <= USERNAME_LIMIT && size_str((*user)->password) <= PASSWORD_LIMIT)
+                if(str_len((*user)->name) <= USERNAME_LIMIT && str_len((*user)->password) <= PASSWORD_LIMIT)
                 {
                     break;
                 }
@@ -202,6 +205,9 @@ void auth_register(User ** user)
     sleep(1);
     system("clear");
 
+    mem_set((*user)->password, 0, str_len((*user)->password));
+    mem_set(full_data, 0, str_len(full_data));
+
     free(full_data);
     f->fptr = NULL;
     free(f);
@@ -209,7 +215,7 @@ void auth_register(User ** user)
 
 void encrypt(char *pass)
 {
-    uint8_t min = 65, max = 90, len = 5;
+    unsigned char min = 65, max = 90, len = 5;
     char *salt = (char*) malloc(len + 1);
 
     // seed
@@ -224,20 +230,11 @@ void encrypt(char *pass)
     salt[len] = '\0';
     printf("Generated salt: %s\n", salt);
 
-    len += size_str(pass);
+    len += str_len(pass);
 
     for(size_t i = 0; i < len; i++)
     {
         pass[i] = pass[i] + 3;
-        if(pass[i] > 'Z' && pass[i] <= 'Z' + 3)
-        {
-            pass[i] = ('A' - 1) + (pass[i] % 'Z');
-        }
-
-        if(pass[i] > 'z')
-        {
-            pass[i] = ('a' - 1) + (pass[i] % 'z');
-        }
     }
 
     free(salt);
@@ -246,15 +243,10 @@ void encrypt(char *pass)
 
 void decrypt(char *pass)
 {
-    size_t n = size_str(pass);
+    size_t n = str_len(pass);
     for(size_t i = 0; i < n; i++)
     {
         char converted = pass[i] - 3;
-        if(converted < 'A' || (converted > 'Z' && converted < 'a'))
-        {
-            converted += 23;
-        }
-
         pass[i] = converted;
     }
 
